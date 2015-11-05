@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html ng-app="triviaApp">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.7/angular-route.min.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls.min.js"></script>
+
+<link rel="stylesheet" href="css/site.css">
+
+<script type="text/javascript" src="app/trivia-app.js"></script>
+<script type="text/javascript" src="app/user/user-service.js"></script>
+<script type="text/javascript" src="app/user/user-controller.js"></script>
+<script type="text/javascript" src="app/role/role-service.js"></script>
+<script type="text/javascript" src="app/role/role-controller.js"></script>
+
+</head>
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">Trivia</a>
+			</div>
+		</div>
+	</nav>
+
+	<div id="bodyContainer" class="container">
+
+		<ul class="nav nav-pills">
+			<li role="presentation"><a href="#/users">Users</a></li>
+			<li role="presentation"><a href="#/roles">Roles</a></li>
+		</ul>
+		
+		<div ng-view></div>
+	</div>
+
+</body>
+</html>
