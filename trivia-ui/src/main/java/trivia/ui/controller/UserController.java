@@ -1,12 +1,13 @@
 package trivia.ui.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
 
+import trivia.ui.api.TriviaUserManagementClient;
 import trivia.ui.dto.RoleDTO;
 import trivia.ui.dto.UserDTO;
 
@@ -14,50 +15,36 @@ import trivia.ui.dto.UserDTO;
 @RequestMapping("/api/users")
 public class UserController {
 
-	private String userManagementUrlRoot = "http://localhost:8081";
+	@Autowired
+	private TriviaUserManagementClient userManagementClient;
 
 	@RequestMapping(method = RequestMethod.POST)
 	public UserDTO createUser(@RequestBody UserDTO user) {
-		RestTemplate restTemplate = new RestTemplate();
-		UserDTO responseUser = restTemplate.postForObject(getUserManagementUrlRoot() + "/users", user, UserDTO.class);
-		return responseUser;
+		return userManagementClient.createUser(user);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public void deleteUser(@PathVariable String id) {
-		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.delete(getUserManagementUrlRoot() + "/users/" + id);
+		userManagementClient.deleteUser(id);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public UserDTO[] findAllUsers() {
-		RestTemplate restTemplate = new RestTemplate();
-		UserDTO[] users = restTemplate.getForObject(getUserManagementUrlRoot() + "/users", UserDTO[].class);
-		return users;
+	public Iterable<UserDTO> findAllUsers() {
+		return userManagementClient.findAllUsers();
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public UserDTO findUserById(@PathVariable String id) {
-		RestTemplate restTemplate = new RestTemplate();
-		UserDTO user = restTemplate.getForObject(getUserManagementUrlRoot() + "/users/" + id, UserDTO.class);
-		return user;
+		return userManagementClient.findUserById(id);
 	}
 
 	@RequestMapping(value = "/{id}/roles", method = RequestMethod.GET)
-	public RoleDTO[] findUserRoles(@PathVariable String id) {
-		RestTemplate restTemplate = new RestTemplate();
-		RoleDTO[] roles = restTemplate.getForObject(getUserManagementUrlRoot() + "/users/" + id + "/roles",
-				RoleDTO[].class);
-		return roles;
-	}
-
-	public String getUserManagementUrlRoot() {
-		return userManagementUrlRoot;
+	public Iterable<RoleDTO> findUserRoles(@PathVariable String id) {
+		return userManagementClient.findUserRoles(id);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
 	public void updateUser(@PathVariable String id, @RequestBody UserDTO user) {
-		RestTemplate restTemplate = new RestTemplate();
-		restTemplate.put(getUserManagementUrlRoot() + "/users/" + id, user);
+		userManagementClient.updateUser(id, user);
 	}
 }
