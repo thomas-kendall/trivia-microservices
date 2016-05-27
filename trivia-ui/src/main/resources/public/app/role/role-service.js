@@ -23,7 +23,7 @@
 		};
 		
 		var saveRole = function(role){
-			if(role.id){
+			if(role.id){				
 				updateRole(role);
 			} else {
 				createRole(role);

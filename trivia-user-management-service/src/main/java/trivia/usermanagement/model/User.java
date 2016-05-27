@@ -9,11 +9,16 @@ public class User {
 
 	private String email;
 
+	// For simplicity sake, we keep a simple hash code. In the real world, we
+	// would do something better.
+	private int passwordHash;
+
 	public User() {
 	}
 
-	public User(String email) {
+	public User(String email, String password) {
 		this.email = email;
+		setPassword(password);
 	}
 
 	@Override
@@ -37,6 +42,10 @@ public class User {
 		return id;
 	}
 
+	public int getPasswordHash() {
+		return passwordHash;
+	}
+
 	@Override
 	public int hashCode() {
 		if (getId() != null) {
@@ -54,6 +63,15 @@ public class User {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public void setPassword(String password) {
+		int hc = password.hashCode();
+		setPasswordHash(hc);
+	}
+
+	public void setPasswordHash(int passwordHash) {
+		this.passwordHash = passwordHash;
 	}
 
 }

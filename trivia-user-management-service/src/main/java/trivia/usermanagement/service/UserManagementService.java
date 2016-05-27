@@ -17,6 +17,17 @@ public class UserManagementService {
 	private UserRepository userRepository = new UserRepository();
 	private UserRoleRepository userRoleRepository = new UserRoleRepository();
 
+	public UserDTO authenticateUser(String email, String password) {
+		UserDTO userDTO = null;
+		User user = userRepository.findByEmail(email);
+		if (user != null) {
+			if (user.getPasswordHash() == password.hashCode()) {
+				userDTO = convertUserToUserDTO(user);
+			}
+		}
+		return userDTO;
+	}
+
 	private List<RoleDTO> convertRolesToRoleDTOs(List<Role> roles) {
 		List<RoleDTO> roleDTOs = new ArrayList<RoleDTO>();
 		for (Role role : roles) {
@@ -57,7 +68,7 @@ public class UserManagementService {
 	}
 
 	public UserDTO createUser(UserDTO userDTO) {
-		User user = new User(userDTO.email);
+		User user = new User(userDTO.email, userDTO.password);
 		user = userRepository.create(user);
 		updateUserRoles(user, userDTO.roleIds);
 		userDTO = convertUserToUserDTO(user);
@@ -111,7 +122,7 @@ public class UserManagementService {
 		User user = userRepository.findById(id);
 		// TODO: make a converter for UserDTO to User
 		user.setEmail(userDTO.email);
-		user = userRepository.update(id, user);
+		user = userRepository.update(id, user, userDTO.password);
 		updateUserRoles(user, userDTO.roleIds);
 		return convertUserToUserDTO(user);
 	}

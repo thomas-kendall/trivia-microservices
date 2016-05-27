@@ -22,13 +22,13 @@ public class DataInitializer {
 		managerRole = roleRepo.create(managerRole);
 
 		// Create Users
-		User userA = new User("a@alpha.org");
+		User userA = new User("a@alpha.org", "password-a");
 		userA = userRepo.create(userA);
 
-		User userB = new User("b@alpha.org");
+		User userB = new User("b@alpha.org", "password-b");
 		userB = userRepo.create(userB);
 
-		User userC = new User("c@alpha.org");
+		User userC = new User("c@alpha.org", "password-c");
 		userC = userRepo.create(userC);
 
 		// Create UserRoles

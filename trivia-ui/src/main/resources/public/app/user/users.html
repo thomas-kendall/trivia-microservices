@@ -33,6 +33,10 @@
 				<label for="editUserEmailTextInput">Email address</label> 
 				<input id="editUserEmailTextInput" name="email" type="text" class="form-control" required ng-model="selectedUser.email" />
 			</div>
+			<div class="form-group">
+				<label for="editUserPasswordTextInput">Password</label> 
+				<input id="editUserPasswordTextInput" name="password" type="text" class="form-control" required ng-model="selectedUser.password" />
+			</div>
 			<label>Roles</label>
 			<ul class="list-group">
   				<li ng-repeat="role in allRoles" class="list-group-item">

@@ -35,6 +35,17 @@ public class UserRepository {
 		return getUsers();
 	}
 
+	public User findByEmail(String email) {
+		User result = null;
+		for (User user : getUsers()) {
+			if (user.getEmail().equals(email)) {
+				result = user;
+				break;
+			}
+		}
+		return result;
+	}
+
 	public User findById(String id) {
 		User result = null;
 		for (User user : getUsers()) {
@@ -46,12 +57,18 @@ public class UserRepository {
 		return result;
 	}
 
-	public User update(String id, User user) {
+	public User update(String id, User user, String password) {
 		User repoUser = findById(id);
 		if (repoUser == null) {
 			throw new IllegalArgumentException("User not found for id: " + id);
 		}
 		repoUser.setEmail(user.getEmail());
+
+		// If a password gets passed in, we set the new password
+		if (password != null && !password.isEmpty()) {
+			repoUser.setPassword(password);
+		}
+
 		// TODO: copy over the roles
 		return repoUser;
 	}
