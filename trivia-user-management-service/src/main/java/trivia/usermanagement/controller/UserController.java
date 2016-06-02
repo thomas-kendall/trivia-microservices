@@ -1,13 +1,16 @@
 package trivia.usermanagement.controller;
 
+import java.util.Collection;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import trivia.usermanagement.dto.AuthenticationDTO;
 import trivia.usermanagement.dto.RoleDTO;
 import trivia.usermanagement.dto.UserDTO;
 import trivia.usermanagement.service.UserManagementService;
@@ -16,7 +19,13 @@ import trivia.usermanagement.service.UserManagementService;
 @RequestMapping("/users")
 public class UserController {
 
-	private UserManagementService userManagementService = new UserManagementService();
+	@Autowired
+	private UserManagementService userManagementService;
+
+	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+	public UserDTO authenticateUser(@RequestBody AuthenticationDTO authenticationDTO) {
+		return userManagementService.authenticateUser(authenticationDTO.email, authenticationDTO.password);
+	}
 
 	@RequestMapping(method = RequestMethod.POST)
 	public UserDTO createUser(@RequestBody UserDTO userDTO) {
@@ -24,7 +33,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void deleteUser(@PathVariable String id) {
+	public void deleteUser(@PathVariable int id) {
 		userManagementService.deleteUser(id);
 	}
 
@@ -34,17 +43,17 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public UserDTO findUserById(@PathVariable String id) {
+	public UserDTO findUserById(@PathVariable int id) {
 		return userManagementService.findUserById(id);
 	}
 
 	@RequestMapping(value = "/{id}/roles", method = RequestMethod.GET)
-	public List<RoleDTO> findUserRoles(@PathVariable String id) {
+	public Collection<RoleDTO> findUserRoles(@PathVariable int id) {
 		return userManagementService.findAllRolesForUser(id);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public void updateUser(@PathVariable String id, @RequestBody UserDTO userDTO) {
+	public void updateUser(@PathVariable int id, @RequestBody UserDTO userDTO) {
 		userDTO = userManagementService.updateUser(id, userDTO);
 	}
 

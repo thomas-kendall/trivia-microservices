@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>trivia</groupId>
-	<artifactId>user-management-service</artifactId>
+	<artifactId>trivia-token-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>trivia-user-management-service</name>
-	<description>User management service for trivia application</description>
+	<name>trivia-token-service</name>
+	<description></description>
 
 	<parent>
 		<groupId>org.springframework.cloud</groupId>
@@ -25,25 +25,14 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
+			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-eureka</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -55,9 +44,8 @@
 			<artifactId>jjwt</artifactId>
 			<version>0.6.0</version>
 		</dependency>
-
 	</dependencies>
-
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -66,6 +54,6 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	
 
 </project>

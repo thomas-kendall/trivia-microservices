@@ -1,7 +1,8 @@
 package trivia.usermanagement.controller;
 
-import java.util.List;
+import java.util.Collection;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +16,8 @@ import trivia.usermanagement.service.UserManagementService;
 @RequestMapping("/roles")
 public class RoleController {
 
-	private UserManagementService userManagementService = new UserManagementService();
+	@Autowired
+	private UserManagementService userManagementService;
 
 	@RequestMapping(method = RequestMethod.POST)
 	public RoleDTO createRole(@RequestBody RoleDTO roleDTO) {
@@ -23,22 +25,22 @@ public class RoleController {
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void deleteRole(@PathVariable String id) {
+	public void deleteRole(@PathVariable int id) {
 		userManagementService.deleteRole(id);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
-	public List<RoleDTO> findAllRoles() {
+	public Collection<RoleDTO> findAllRoles() {
 		return userManagementService.findAllRoles();
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public RoleDTO findRoleById(@PathVariable String id) {
+	public RoleDTO findRoleById(@PathVariable int id) {
 		return userManagementService.findRoleById(id);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public void updateRole(@PathVariable String id, @RequestBody RoleDTO roleDTO) {
+	public void updateRole(@PathVariable int id, @RequestBody RoleDTO roleDTO) {
 		roleDTO = userManagementService.updateRole(id, roleDTO);
 	}
 

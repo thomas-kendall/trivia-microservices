@@ -1,49 +1,43 @@
 package trivia.usermanagement;
 
-import trivia.usermanagement.model.Role;
-import trivia.usermanagement.model.User;
-import trivia.usermanagement.model.UserRole;
-import trivia.usermanagement.repository.RoleRepository;
-import trivia.usermanagement.repository.UserRepository;
-import trivia.usermanagement.repository.UserRoleRepository;
+import java.util.ArrayList;
+import java.util.Collection;
 
-public class DataInitializer {
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
-	public static void initialize() {
-		RoleRepository roleRepo = new RoleRepository();
-		UserRepository userRepo = new UserRepository();
-		UserRoleRepository userRoleRepo = new UserRoleRepository();
+import trivia.usermanagement.dto.RoleDTO;
+import trivia.usermanagement.dto.UserDTO;
+import trivia.usermanagement.service.UserManagementService;
 
+@Component
+public class DataInitializer implements CommandLineRunner {
+
+	@Autowired
+	private UserManagementService service;
+
+	private Collection<Integer> roleDTOsToIdCollection(RoleDTO... roles) {
+		Collection<Integer> idCollection = new ArrayList<>();
+		for (RoleDTO role : roles) {
+			idCollection.add(role.id);
+		}
+		return idCollection;
+	}
+
+	@Override
+	public void run(String... arg0) throws Exception {
 		// Create Roles
-		Role adminRole = new Role("admin");
-		adminRole = roleRepo.create(adminRole);
-
-		Role managerRole = new Role("manager");
-		managerRole = roleRepo.create(managerRole);
+		RoleDTO adminRole = service.createRole(new RoleDTO("admin"));
+		RoleDTO managerRole = service.createRole(new RoleDTO("manager"));
 
 		// Create Users
-		User userA = new User("a@alpha.org", "password-a");
-		userA = userRepo.create(userA);
+		UserDTO userA = service.createUser(new UserDTO("a@alpha.org", "password-a", roleDTOsToIdCollection(adminRole)));
+		UserDTO userB = service.createUser(new UserDTO("b@alpha.org", "password-b", roleDTOsToIdCollection(managerRole)));
+		UserDTO userC = service
+				.createUser(new UserDTO("c@alpha.org", "password-c", roleDTOsToIdCollection(adminRole, managerRole)));
 
-		User userB = new User("b@alpha.org", "password-b");
-		userB = userRepo.create(userB);
-
-		User userC = new User("c@alpha.org", "password-c");
-		userC = userRepo.create(userC);
-
-		// Create UserRoles
-		UserRole userRole;
-
-		userRole = new UserRole(userA, adminRole);
-		userRole = userRoleRepo.create(userRole);
-
-		userRole = new UserRole(userB, managerRole);
-		userRole = userRoleRepo.create(userRole);
-
-		userRole = new UserRole(userC, adminRole);
-		userRole = userRoleRepo.create(userRole);
-		userRole = new UserRole(userC, managerRole);
-		userRole = userRoleRepo.create(userRole);
-
+		service.findAllRoles().forEach(r -> System.out.println(r));
+		service.findAllUsers().forEach(u -> System.out.println(u));
 	}
 }

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import trivia.ui.api.TriviaUserManagementClient;
+import trivia.ui.api.TriviaUserManagementServiceAPI;
 import trivia.ui.dto.RoleDTO;
 
 @RestController
@@ -15,7 +15,7 @@ import trivia.ui.dto.RoleDTO;
 public class RoleController {
 
 	@Autowired
-	private TriviaUserManagementClient userManagementClient;
+	private TriviaUserManagementServiceAPI userManagementClient;
 
 	@RequestMapping(method = RequestMethod.POST)
 	public RoleDTO createRole(@RequestBody RoleDTO role) {

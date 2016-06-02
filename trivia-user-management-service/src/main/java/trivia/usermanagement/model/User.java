@@ -1,19 +1,33 @@
 package trivia.usermanagement.model;
 
-import org.springframework.data.annotation.Id;
+import java.util.Set;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+
+@Entity
 public class User {
 
 	@Id
-	private String id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private int id;
 
 	private String email;
+
+	@ManyToMany
+	@JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+	private Set<Role> roles;
 
 	// For simplicity sake, we keep a simple hash code. In the real world, we
 	// would do something better.
 	private int passwordHash;
 
-	public User() {
+	protected User() {
 	}
 
 	public User(String email, String password) {
@@ -21,24 +35,17 @@ public class User {
 		setPassword(password);
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-
-		if (!(obj instanceof User)) {
-			return false;
-		}
-
-		return hashCode() == obj.hashCode();
+	public User(String email, String password, Set<Role> roles) {
+		this.email = email;
+		setPassword(password);
+		this.roles = roles;
 	}
 
 	public String getEmail() {
 		return email;
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
@@ -46,22 +53,15 @@ public class User {
 		return passwordHash;
 	}
 
-	@Override
-	public int hashCode() {
-		if (getId() != null) {
-			return getId().hashCode();
-		} else if (getEmail() != null) {
-			return getEmail().hashCode();
-		}
-
-		return 0;
+	public Set<Role> getRoles() {
+		return roles;
 	}
 
 	public void setEmail(String email) {
 		this.email = email;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -74,4 +74,19 @@ public class User {
 		this.passwordHash = passwordHash;
 	}
 
+	public void setRoles(Set<Role> roles) {
+		this.roles = roles;
+	}
+
+	@Override
+	public String toString() {
+		String rolesString = "";
+		if (roles != null) {
+			for (Role role : roles) {
+				rolesString += role.toString();
+			}
+		}
+
+		return String.format("User[id=%d, email=%s, roles=%s]", id, email, rolesString);
+	}
 }

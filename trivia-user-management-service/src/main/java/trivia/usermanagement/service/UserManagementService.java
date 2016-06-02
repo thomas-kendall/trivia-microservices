@@ -1,21 +1,31 @@
 package trivia.usermanagement.service;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import trivia.usermanagement.dto.RoleDTO;
 import trivia.usermanagement.dto.UserDTO;
 import trivia.usermanagement.model.Role;
 import trivia.usermanagement.model.User;
-import trivia.usermanagement.model.UserRole;
 import trivia.usermanagement.repository.RoleRepository;
 import trivia.usermanagement.repository.UserRepository;
-import trivia.usermanagement.repository.UserRoleRepository;
 
+@Service
+@Transactional
 public class UserManagementService {
-	private RoleRepository roleRepository = new RoleRepository();
-	private UserRepository userRepository = new UserRepository();
-	private UserRoleRepository userRoleRepository = new UserRoleRepository();
+
+	@Autowired
+	private RoleRepository roleRepository;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	public UserDTO authenticateUser(String email, String password) {
 		UserDTO userDTO = null;
@@ -28,7 +38,7 @@ public class UserManagementService {
 		return userDTO;
 	}
 
-	private List<RoleDTO> convertRolesToRoleDTOs(List<Role> roles) {
+	private Collection<RoleDTO> convertRolesToRoleDTOs(Collection<Role> roles) {
 		List<RoleDTO> roleDTOs = new ArrayList<RoleDTO>();
 		for (Role role : roles) {
 			roleDTOs.add(convertRoleToRoleDTO(role));
@@ -36,19 +46,19 @@ public class UserManagementService {
 		return roleDTOs;
 	}
 
-	private RoleDTO convertRoleToRoleDTO(Role role) {
-		return new RoleDTO(role.getId(), role.getName());
-	}
-
-	private List<String> convertUserRolesToRoleIds(List<UserRole> userRoles) {
-		List<String> roleIds = new ArrayList<String>();
-		for (UserRole userRole : userRoles) {
-			roleIds.add(userRole.getRole().getId());
+	private Collection<Integer> convertRolesToRoleIds(Collection<Role> roles) {
+		List<Integer> roleIds = new ArrayList<>();
+		for (Role userRole : roles) {
+			roleIds.add(userRole.getId());
 		}
 		return roleIds;
 	}
 
-	private List<UserDTO> convertUsersToUserDTOs(List<User> users) {
+	private RoleDTO convertRoleToRoleDTO(Role role) {
+		return new RoleDTO(role.getId(), role.getName());
+	}
+
+	private List<UserDTO> convertUsersToUserDTOs(Collection<User> users) {
 		List<UserDTO> userDTOs = new ArrayList<UserDTO>();
 		for (User user : users) {
 			userDTOs.add(convertUserToUserDTO(user));
@@ -57,43 +67,51 @@ public class UserManagementService {
 	}
 
 	private UserDTO convertUserToUserDTO(User user) {
-		List<String> roleIds = convertUserRolesToRoleIds(userRoleRepository.findAllForUser(user.getId()));
+		Collection<Integer> roleIds = convertRolesToRoleIds(user.getRoles());
 		return new UserDTO(user.getId(), user.getEmail(), roleIds);
 	}
 
 	public RoleDTO createRole(RoleDTO roleDTO) {
 		Role role = new Role(roleDTO.name);
-		role = roleRepository.create(role);
+		role = roleRepository.save(role);
 		return convertRoleToRoleDTO(role);
 	}
 
 	public UserDTO createUser(UserDTO userDTO) {
-		User user = new User(userDTO.email, userDTO.password);
-		user = userRepository.create(user);
-		updateUserRoles(user, userDTO.roleIds);
+		Set<Role> roles = new HashSet<>(roleRepository.findAll(userDTO.roleIds));
+		User user = new User(userDTO.email, userDTO.password, roles);
+		user = userRepository.save(user);
 		userDTO = convertUserToUserDTO(user);
 		return userDTO;
 	}
 
-	public void deleteRole(String id) {
-		userRoleRepository.deleteForRole(id);
-		roleRepository.delete(id);
+	public void deleteRole(int id) {
+		Role role = roleRepository.findOne(id);
+		if (role != null) {
+			roleRepository.delete(role);
+		}
 	}
 
-	public void deleteUser(String id) {
-		userRoleRepository.deleteForUser(id);
-		userRepository.delete(id);
+	public void deleteUser(int id) {
+		User user = userRepository.findOne(id);
+		if (user != null) {
+			userRepository.delete(user);
+		}
 	}
 
-	public List<RoleDTO> findAllRoles() {
+	public Collection<RoleDTO> findAllRoles() {
 		List<Role> roles = roleRepository.findAll();
-		List<RoleDTO> roleDTOs = convertRolesToRoleDTOs(roles);
+		Collection<RoleDTO> roleDTOs = convertRolesToRoleDTOs(roles);
 		return roleDTOs;
 	}
 
-	public List<RoleDTO> findAllRolesForUser(String id) {
-		List<Role> roles = userRoleRepository.findAllRolesForUser(id);
-		List<RoleDTO> roleDTOs = convertRolesToRoleDTOs(roles);
+	public Collection<RoleDTO> findAllRolesForUser(int id) {
+		Collection<Role> roles = new HashSet<>();
+		User user = userRepository.findOne(id);
+		if (user != null) {
+			roles = user.getRoles();
+		}
+		Collection<RoleDTO> roleDTOs = convertRolesToRoleDTOs(roles);
 		return roleDTOs;
 	}
 
@@ -103,63 +121,32 @@ public class UserManagementService {
 		return userDTOs;
 	}
 
-	public RoleDTO findRoleById(String id) {
-		return convertRoleToRoleDTO(roleRepository.findById(id));
+	public RoleDTO findRoleById(int id) {
+		return convertRoleToRoleDTO(roleRepository.findOne(id));
 	}
 
-	public UserDTO findUserById(String id) {
-		return convertUserToUserDTO(userRepository.findById(id));
+	public UserDTO findUserById(int id) {
+		return convertUserToUserDTO(userRepository.findOne(id));
 	}
 
-	public RoleDTO updateRole(String id, RoleDTO roleDTO) {
-		Role role = roleRepository.findById(id);
+	public RoleDTO updateRole(int id, RoleDTO roleDTO) {
+		Role role = roleRepository.findOne(id);
 		// TODO: make a converter for RoleDTO to Role
 		role.setName(roleDTO.name);
-		return convertRoleToRoleDTO(roleRepository.update(id, role));
+		return convertRoleToRoleDTO(roleRepository.save(role));
 	}
 
-	public UserDTO updateUser(String id, UserDTO userDTO) {
-		User user = userRepository.findById(id);
+	public UserDTO updateUser(int id, UserDTO userDTO) {
+		User user = userRepository.findOne(id);
 		// TODO: make a converter for UserDTO to User
+		Set<Role> roles = new HashSet<>(roleRepository.findAll(userDTO.roleIds));
 		user.setEmail(userDTO.email);
-		user = userRepository.update(id, user, userDTO.password);
-		updateUserRoles(user, userDTO.roleIds);
+		// Only set the password if it was passed in
+		if (userDTO.password != null) {
+			user.setPassword(userDTO.password);
+		}
+		user.setRoles(roles);
+		user = userRepository.save(user);
 		return convertUserToUserDTO(user);
 	}
-
-	private void updateUserRoles(User user, List<String> roleIds) {
-		List<UserRole> currentUserRoles = userRoleRepository.findAllForUser(user.getId());
-		List<String> currentRoleIds = convertUserRolesToRoleIds(currentUserRoles);
-
-		// Find all UserRoles to delete (in userRoles but not in roleIds)
-		List<String> userRoleIdsToDelete = new ArrayList<String>();
-		for (UserRole userRole : currentUserRoles) {
-			if (!roleIds.contains(userRole.getRole().getId())) {
-				userRoleIdsToDelete.add(userRole.getId());
-			}
-		}
-
-		// Find all Roles to create (in roleIds but not in userRoles)
-		List<String> roleIdsToCreate = new ArrayList<String>();
-		for (String roleId : roleIds) {
-			if (!currentRoleIds.contains(roleId)) {
-				roleIdsToCreate.add(roleId);
-			}
-		}
-
-		// Delete UserRoles
-		for (String userRoleId : userRoleIdsToDelete) {
-			userRoleRepository.delete(userRoleId);
-		}
-
-		// Create UserRoles
-		for (String roleId : roleIdsToCreate) {
-			Role role = roleRepository.findById(roleId);
-			if (role != null) {
-				UserRole userRole = new UserRole(user, role);
-				userRole = userRoleRepository.create(userRole);
-			}
-		}
-	}
-
 }
