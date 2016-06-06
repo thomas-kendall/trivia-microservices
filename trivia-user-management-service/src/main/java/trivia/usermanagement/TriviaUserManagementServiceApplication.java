@@ -6,6 +6,7 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
 @EnableDiscoveryClient
+// TODO: Add circuit breaker
 public class TriviaUserManagementServiceApplication {
 
 	public static void main(String[] args) {

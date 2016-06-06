@@ -26,14 +26,15 @@ public class DataInitializer implements CommandLineRunner {
 	}
 
 	@Override
-	public void run(String... arg0) throws Exception {
+	public void run(String... arguments) throws Exception {
 		// Create Roles
 		RoleDTO adminRole = service.createRole(new RoleDTO("admin"));
 		RoleDTO managerRole = service.createRole(new RoleDTO("manager"));
 
 		// Create Users
 		UserDTO userA = service.createUser(new UserDTO("a@alpha.org", "password-a", roleDTOsToIdCollection(adminRole)));
-		UserDTO userB = service.createUser(new UserDTO("b@alpha.org", "password-b", roleDTOsToIdCollection(managerRole)));
+		UserDTO userB = service
+				.createUser(new UserDTO("b@alpha.org", "password-b", roleDTOsToIdCollection(managerRole)));
 		UserDTO userC = service
 				.createUser(new UserDTO("c@alpha.org", "password-c", roleDTOsToIdCollection(adminRole, managerRole)));
 

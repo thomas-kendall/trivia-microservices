@@ -15,30 +15,30 @@ import trivia.ui.dto.RoleDTO;
 public class RoleController {
 
 	@Autowired
-	private TriviaUserManagementServiceAPI userManagementClient;
+	private TriviaUserManagementServiceAPI userManagementAPI;
 
 	@RequestMapping(method = RequestMethod.POST)
 	public RoleDTO createRole(@RequestBody RoleDTO role) {
-		return userManagementClient.createRole(role);
+		return userManagementAPI.createRole(role);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void deleteRole(@PathVariable String id) {
-		userManagementClient.deleteRole(id);
+	public void deleteRole(@PathVariable int id) {
+		userManagementAPI.deleteRole(id);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public Iterable<RoleDTO> findAllRoles() {
-		return userManagementClient.findAllRoles();
+		return userManagementAPI.findAllRoles();
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public RoleDTO findRoleById(@PathVariable String id) {
-		return userManagementClient.findRoleById(id);
+	public RoleDTO findRoleById(@PathVariable int id) {
+		return userManagementAPI.findRoleById(id);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public void updateRole(@PathVariable String id, @RequestBody RoleDTO role) {
-		userManagementClient.updateRole(id, role);
+	public void updateRole(@PathVariable int id, @RequestBody RoleDTO role) {
+		userManagementAPI.updateRole(id, role);
 	}
 }

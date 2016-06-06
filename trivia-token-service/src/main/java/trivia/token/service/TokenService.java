@@ -4,6 +4,8 @@ import java.security.Key;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -11,34 +13,36 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.crypto.MacProvider;
 import trivia.token.dto.AuthTokenDetailsDTO;
 
+@Service
 public class TokenService {
 
+	private static SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS512;
+	private static Key securityKeyInstance;
+
+	private static Key getSecurityKey() {
+		if (securityKeyInstance == null) {
+			securityKeyInstance = MacProvider.generateKey(signatureAlgorithm);
+		}
+		return securityKeyInstance;
+	}
+
 	public String createJsonWebToken(AuthTokenDetailsDTO authTokenDetailsDTO) {
-
-		// Calendar calendar = Calendar.getInstance();
-		// calendar.add(Calendar.MINUTE,
-		// authTokenDetailsDTO.minutesBeforeExpiration);
-		// Date expirationDate = calendar.getTime();
-
-		// TODO Can we get a key from a properties file instead?
-		Key key = MacProvider.generateKey();
+		Key key = getSecurityKey();
 		String token = Jwts.builder().setSubject(authTokenDetailsDTO.userId).claim("email", authTokenDetailsDTO.email)
 				.claim("roles", authTokenDetailsDTO.roleNames).setExpiration(authTokenDetailsDTO.expirationDate)
-				.signWith(SignatureAlgorithm.HS256, key).compact();
+				.signWith(signatureAlgorithm, key).compact();
 		return token;
 	}
 
 	public AuthTokenDetailsDTO parseAndValidate(String token) {
 		AuthTokenDetailsDTO authTokenDetailsDTO = null;
 		try {
-			// TODO use global key
-			Key key = MacProvider.generateKey();
-
+			Key key = getSecurityKey();
 			Claims claims = Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody();
 			String userId = claims.getSubject();
 			String email = (String) claims.get("email");
-			List<String> roleNames = (List<String>) claims.get("roleNames");
-			Date expirationDate = (Date) claims.get("expirationDate");
+			List<String> roleNames = (List<String>) claims.get("roles");
+			Date expirationDate = claims.getExpiration();
 
 			authTokenDetailsDTO = new AuthTokenDetailsDTO();
 			authTokenDetailsDTO.userId = userId;

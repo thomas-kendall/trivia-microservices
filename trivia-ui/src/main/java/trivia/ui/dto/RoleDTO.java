@@ -1,13 +1,13 @@
 package trivia.ui.dto;
 
 public class RoleDTO {
-	public String id;
+	public int id;
 	public String name;
 
 	public RoleDTO() {
 	}
 
-	public RoleDTO(String id, String name) {
+	public RoleDTO(int id, String name) {
 		this.id = id;
 		this.name = name;
 	}

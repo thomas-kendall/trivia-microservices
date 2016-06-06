@@ -11,6 +11,6 @@ public class AuthTokenDetailsDTO {
 	public String email;
 	public List<String> roleNames;
 
-	@JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd hh:mm:ss")
+	@JsonFormat(shape = Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
 	public Date expirationDate;
 }

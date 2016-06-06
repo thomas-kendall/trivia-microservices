@@ -16,35 +16,35 @@ import trivia.ui.dto.UserDTO;
 public class UserController {
 
 	@Autowired
-	private TriviaUserManagementServiceAPI userManagementClient;
+	private TriviaUserManagementServiceAPI userManagementAPI;
 
 	@RequestMapping(method = RequestMethod.POST)
 	public UserDTO createUser(@RequestBody UserDTO user) {
-		return userManagementClient.createUser(user);
+		return userManagementAPI.createUser(user);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void deleteUser(@PathVariable String id) {
-		userManagementClient.deleteUser(id);
+	public void deleteUser(@PathVariable int id) {
+		userManagementAPI.deleteUser(id);
 	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public Iterable<UserDTO> findAllUsers() {
-		return userManagementClient.findAllUsers();
+		return userManagementAPI.findAllUsers();
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public UserDTO findUserById(@PathVariable String id) {
-		return userManagementClient.findUserById(id);
+	public UserDTO findUserById(@PathVariable int id) {
+		return userManagementAPI.findUserById(id);
 	}
 
 	@RequestMapping(value = "/{id}/roles", method = RequestMethod.GET)
-	public Iterable<RoleDTO> findUserRoles(@PathVariable String id) {
-		return userManagementClient.findUserRoles(id);
+	public Iterable<RoleDTO> findUserRoles(@PathVariable int id) {
+		return userManagementAPI.findUserRoles(id);
 	}
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public void updateUser(@PathVariable String id, @RequestBody UserDTO user) {
-		userManagementClient.updateUser(id, user);
+	public void updateUser(@PathVariable int id, @RequestBody UserDTO user) {
+		userManagementAPI.updateUser(id, user);
 	}
 }
