@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import trivia.usermanagement.dto.AuthenticationDTO;
 import trivia.usermanagement.dto.RoleDTO;
 import trivia.usermanagement.dto.UserDTO;
 import trivia.usermanagement.service.UserManagementService;
@@ -21,11 +20,6 @@ public class UserController {
 
 	@Autowired
 	private UserManagementService userManagementService;
-
-	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-	public UserDTO authenticateUser(@RequestBody AuthenticationDTO authenticationDTO) {
-		return userManagementService.authenticateUser(authenticationDTO.email, authenticationDTO.password);
-	}
 
 	@RequestMapping(method = RequestMethod.POST)
 	public UserDTO createUser(@RequestBody UserDTO userDTO) {

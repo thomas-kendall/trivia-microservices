@@ -1,4 +1,4 @@
-package trivia.usermanagement.dto;
+package trivia.common.jsonwebtoken;
 
 import java.util.Date;
 import java.util.List;

@@ -1,4 +1,4 @@
-package trivia.token.dto;
+package trivia.ui.dto;
 
 public class AuthTokenDTO {
 	public String token;

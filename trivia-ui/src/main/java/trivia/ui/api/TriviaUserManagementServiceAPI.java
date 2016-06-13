@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import trivia.ui.dto.AuthTokenDTO;
 import trivia.ui.dto.AuthenticationDTO;
 import trivia.ui.dto.RoleDTO;
 import trivia.ui.dto.UserDTO;
@@ -15,8 +16,8 @@ import trivia.ui.dto.UserDTO;
 @FeignClient("trivia-user-management-service")
 public interface TriviaUserManagementServiceAPI {
 
-	@RequestMapping(value = "/users/authenticate", method = RequestMethod.POST)
-	UserDTO authenticateUser(@RequestBody AuthenticationDTO authenticationDTO);
+	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+	AuthTokenDTO authenticateUser(@RequestBody AuthenticationDTO authenticationDTO);
 
 	@RequestMapping(method = RequestMethod.POST, value = "/roles")
 	RoleDTO createRole(@RequestBody RoleDTO roleDTO);
