@@ -1,23 +1,16 @@
-package trivia.ui.security;
+package trivia.common.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.Http403ForbiddenEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public abstract class JsonWebTokenSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private JsonWebTokenAuthenticationProvider authenticationProvider;
@@ -52,21 +45,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.and()
 
 				// return 403 when not authenticated
-				.exceptionHandling().authenticationEntryPoint(new Http403ForbiddenEntryPoint())
+				.exceptionHandling().authenticationEntryPoint(new Http403ForbiddenEntryPoint());
 
-				.and() //
-				.authorizeRequests()
-
-				// allow anonymous access to /authenticate endpoint
-				.antMatchers("/authenticate").permitAll()
-
-				// allow anonymous to common static resources
-				.antMatchers(HttpMethod.GET, "/", "/*.html", "/favicon.ico", "/**/*.html", "/**/*.css", "/**/*.js")
-				.permitAll()
-
-				// authenticate all other requests
-				.anyRequest().authenticated();
+		// Let child classes set up authorization paths
+		setupAuthorization(http);
 
 		http.addFilterBefore(jsonWebTokenFilter, UsernamePasswordAuthenticationFilter.class);
 	}
+
+	protected abstract void setupAuthorization(HttpSecurity http) throws Exception;
 }

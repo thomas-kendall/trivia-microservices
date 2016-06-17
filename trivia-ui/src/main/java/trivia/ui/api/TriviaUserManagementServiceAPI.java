@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.springframework.cloud.netflix.feign.FeignClient;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -20,35 +21,38 @@ public interface TriviaUserManagementServiceAPI {
 	AuthTokenDTO authenticateUser(@RequestBody AuthenticationDTO authenticationDTO);
 
 	@RequestMapping(method = RequestMethod.POST, value = "/roles")
-	RoleDTO createRole(@RequestBody RoleDTO roleDTO);
+	RoleDTO createRole(@RequestHeader("Authorization") String authorizationToken, @RequestBody RoleDTO roleDTO);
 
 	@RequestMapping(method = RequestMethod.POST, value = "/users")
-	UserDTO createUser(@RequestBody UserDTO userDTO);
+	UserDTO createUser(@RequestHeader("Authorization") String authorizationToken, @RequestBody UserDTO userDTO);
 
 	@RequestMapping(method = RequestMethod.DELETE, value = "/roles/{id}")
-	void deleteRole(@PathVariable("id") int id);
+	void deleteRole(@RequestHeader("Authorization") String authorizationToken, @PathVariable("id") int id);
 
 	@RequestMapping(method = RequestMethod.DELETE, value = "/users/{id}")
-	void deleteUser(@PathVariable("id") int id);
+	void deleteUser(@RequestHeader("Authorization") String authorizationToken, @PathVariable("id") int id);
 
 	@RequestMapping(method = RequestMethod.GET, value = "/roles")
-	Collection<RoleDTO> findAllRoles();
+	Collection<RoleDTO> findAllRoles(@RequestHeader("Authorization") String authorizationToken);
 
 	@RequestMapping(method = RequestMethod.GET, value = "/users")
-	Collection<UserDTO> findAllUsers();
+	Collection<UserDTO> findAllUsers(@RequestHeader("Authorization") String authorizationToken);
 
 	@RequestMapping(method = RequestMethod.GET, value = "/roles/{id}", produces = "application/json", consumes = "application/json")
-	RoleDTO findRoleById(@PathVariable("id") int id);
+	RoleDTO findRoleById(@RequestHeader("Authorization") String authorizationToken, @PathVariable("id") int id);
 
 	@RequestMapping(method = RequestMethod.GET, value = "/users/{id}", produces = "application/json", consumes = "application/json")
-	UserDTO findUserById(@PathVariable("id") int id);
+	UserDTO findUserById(@RequestHeader("Authorization") String authorizationToken, @PathVariable("id") int id);
 
 	@RequestMapping(method = RequestMethod.GET, value = "/users/{id}/roles")
-	Collection<RoleDTO> findUserRoles(@PathVariable("id") int id);
+	Collection<RoleDTO> findUserRoles(@RequestHeader("Authorization") String authorizationToken,
+			@PathVariable("id") int id);
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/roles/{id}")
-	void updateRole(@PathVariable("id") int id, @RequestBody RoleDTO roleDTO);
+	void updateRole(@RequestHeader("Authorization") String authorizationToken, @PathVariable("id") int id,
+			@RequestBody RoleDTO roleDTO);
 
 	@RequestMapping(method = RequestMethod.PUT, value = "/users/{id}")
-	void updateUser(@PathVariable("id") int id, @RequestBody UserDTO userDTO);
+	void updateUser(@RequestHeader("Authorization") String authorizationToken, @PathVariable("id") int id,
+			@RequestBody UserDTO userDTO);
 }

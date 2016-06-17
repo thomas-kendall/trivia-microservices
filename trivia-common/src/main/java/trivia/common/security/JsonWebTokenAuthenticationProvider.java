@@ -1,4 +1,4 @@
-package trivia.ui.security;
+package trivia.common.security;
 
 import java.util.List;
 import java.util.stream.Collectors;
