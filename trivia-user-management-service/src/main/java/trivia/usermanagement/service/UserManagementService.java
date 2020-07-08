@@ -131,14 +131,12 @@ public class UserManagementService {
 
 	public RoleDTO updateRole(int id, RoleDTO roleDTO) {
 		Role role = roleRepository.findOne(id);
-		// TODO: make a converter for RoleDTO to Role
 		role.setName(roleDTO.name);
 		return convertRoleToRoleDTO(roleRepository.save(role));
 	}
 
 	public UserDTO updateUser(int id, UserDTO userDTO) {
 		User user = userRepository.findOne(id);
-		// TODO: make a converter for UserDTO to User
 		Set<Role> roles = new HashSet<>(roleRepository.findAll(userDTO.roleIds));
 		user.setEmail(userDTO.email);
 		// Only set the password if it was passed in
